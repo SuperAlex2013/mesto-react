@@ -1,22 +1,13 @@
-import React from 'react';
 import logo from '../images/logo.svg';
 
-function Logo() {
+export default function Header({ logoSrc = logo, logoAlt = 'логотип Mesto', ...otherProps }) {
     return (
-        <img
-            className="header__logo"
-            src={logo}
-            alt="логотип Mesto"
-        />
-    );
-}
-
-export default function Header({ className }) {
-    const headerClass = className ? `header ${className}` : 'header';
-
-    return (
-        <header className={headerClass}>
-            <Logo />
+        <header className="header page__header" {...otherProps}>
+            <img
+                className="header__logo"
+                src={logoSrc}
+                alt={logoAlt}
+            />
         </header>
     );
 }

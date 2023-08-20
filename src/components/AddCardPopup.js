@@ -1,65 +1,68 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect } from 'react';
 import PopupWithForm from "./PopupWithForm";
+import useFormWithValidation from "../hooks/useFormWithValidation";
 
-export default function AddCardPopup(props, isOpen ) {
-    const [name, setName] = useState('');
-    const [link, setLink] = useState('');
+export default function AddCardPopup({ handleAddPlaceClick, isLoading, isOpen, onClose }) {
 
-   useEffect(() => {
-        setName('');
-        setLink('');
-    }, [isOpen]);
-
-    function handleNameChange(evt) {
-        setName(evt.target.value);
-    }
-
-    function handleLinkChange(evt) {
-        setLink(evt.target.value);
-    }
+    const { values, handleChange, errors, isValid, resetForm } = useFormWithValidation({
+        card_name: '',
+        card_src: ''
+    });
 
     function handleSubmit(evt) {
         evt.preventDefault();
-        props.handleAddPlaceClick({
-            name: name,
-            link: link,
-        });
+        if (isValid) {
+            handleAddPlaceClick({
+                name: values.card_name,
+                link: values.card_src,
+            });
+        }
     }
+
+    useEffect(() => {
+        if (!isOpen) {
+            resetForm();
+        }
+    }, [isOpen]);
+
+    const getClassName = (errorKey, baseClass) => {
+        return `${baseClass} ${!errors[errorKey] ? '' : 'form__input-error'}`;
+    };
 
     return (
         <PopupWithForm
-            submitTitle={props.submitTitle}
+            submitTitle={isLoading ? 'Добавляем...' : 'Добавить'}
             name="add-card"
             title="Новое место"
-            isOpen={props.isOpen}
-            onClose={props.onClose}
+            isOpen={isOpen}
+            onClose={onClose}
             onSubmit={handleSubmit}
+            isValid={isValid}
         >
-
             <input
                 id="image-input"
-                className="form__input form__input_string_place"
+                className={getClassName('card_name', 'form__input form__input_string_place')}
                 type="text"
-                onChange={handleNameChange}
-                defaultValue={name}
+                value={values.card_name || ''}
+                onChange={handleChange}
                 name="card_name"
                 placeholder="Название"
                 maxLength={30}
                 minLength={2}
                 required
             />
-            <span className="form__span-error image-input-error" />
+            <span className="form__span-error image-input-error">{errors.card_name}</span>
             <input
                 id="src-input"
-                className="form__input form__input_string_src"
-                defaultValue={link}
+                className={getClassName('card_src', 'form__input form__input_string_src')}
+                value={values.card_src || ''}
                 type="url"
-                onChange={handleLinkChange}
+                onChange={handleChange}
                 name="card_src"
                 placeholder="Ссылка на картинку"
                 required
             />
-            <span className="form__span-error src-input-error" />
+            <span className="form__span-error src-input-error">{errors.card_src}</span>
         </PopupWithForm>
-    )
+    );
 }

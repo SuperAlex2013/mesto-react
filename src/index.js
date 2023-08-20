@@ -1,4 +1,3 @@
-import React, { useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import './pages/index.css';
 import App from './components/App';

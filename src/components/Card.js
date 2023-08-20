@@ -1,63 +1,84 @@
 import React, { useContext } from 'react';
-import { CurrentUserContext } from "../context/CurrentUserContext";
+import PropTypes from 'prop-types';
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-export default function Card({
-  ownerId, 
-  likes = [], 
-  onCardClick, 
-  onCardLike, 
-  onCardDeleteClick, 
-  cardId, 
-  link, 
-  name, 
-  keys
+function Card({ 
+    ownerId, 
+    likes = [], 
+    onCardClick, 
+    onCardLike, 
+    onCardDeleteClick, 
+    cardId, 
+    name, 
+    link 
 }) {
-  const currentUser = useContext(CurrentUserContext);
-  const isOwn = ownerId === currentUser._id;
-  const isLiked = likes.some((i) => i._id === currentUser._id);
-  const cardElementButtonClassName = `card__like ${isLiked ? "card__like_active" : ""}`;
+    const currentUser = useContext(CurrentUserContext);
+    
+    if (!currentUser) return null;
 
-  function handleClick() {
-    onCardClick({ name, link });
-  }
+    const isOwn = ownerId === currentUser._id;
+    const isUserLiked = likes.some(like => like._id === currentUser._id);
+    const cardLikeButtonClassName = `card__like ${isUserLiked ? "card__like_active" : ""}`;
 
-  function handleLikeClick() {
-    onCardLike(cardId, likes);
-  }
-  
-  function handleDeleteCard() {
-    onCardDeleteClick(cardId);
-  }
+    function handleCardClick() {
+        onCardClick({ name, link });
+    }
 
-  return (
-    <li key={keys} className="elements__items">
-      <article className="card">
-        {isOwn && (
-          <button
-            aria-label="Удалить"
-            className="card__trash card_trash_visible"
-            type="button"
-            onClick={handleDeleteCard}
-          />
-        )}
-        <img className="card__item"
-             src={link}
-             alt={name}
-             onClick={handleClick}
-        />
+    function handleLikeClick() {
+        onCardLike(cardId, likes);
+    }
 
-        <div className="card__desc">
-          <h2 className="card__title">{name}</h2>
-          <div className="card__place">
-            <button aria-label="Лайк"
-                type="button"
-                className={cardElementButtonClassName}
-                onClick={handleLikeClick}
-            />
-            <p className="card__like-count">{likes.length}</p>
-          </div>
-        </div>
-      </article>
-    </li>
-  );
+    function handleDeleteCard() {
+        onCardDeleteClick(cardId);
+    }
+
+    return (
+        <li key={cardId} className="elements__items">
+            <article className="card">
+                {isOwn && (
+                    <button
+                        aria-label="Delete"
+                        className="card__trash card_trash_visible"
+                        type="button"
+                        onClick={handleDeleteCard}
+                    />
+                )}
+                <img 
+                    className="card__item"
+                    src={link}
+                    alt={name}
+                    onClick={handleCardClick}
+                />
+                <div className="card__desc">
+                    <h2 className="card__title">{name}</h2>
+                    <div className="card__place">
+                        <button 
+                            aria-label="Like"
+                            type="button"
+                            className={cardLikeButtonClassName}
+                            onClick={handleLikeClick}
+                        />
+                        <p className="card__like-count">{likes.length}</p>
+                    </div>
+                </div>
+            </article>
+        </li>
+    );
 }
+
+Card.propTypes = {
+    ownerId: PropTypes.string.isRequired,
+    likes: PropTypes.arrayOf(
+        PropTypes.shape({
+            _id: PropTypes.string.isRequired
+        })
+    ),
+    onCardClick: PropTypes.func.isRequired,
+    onCardLike: PropTypes.func.isRequired,
+    onCardDeleteClick: PropTypes.func.isRequired,
+    cardId: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired
+};
+
+export default Card;

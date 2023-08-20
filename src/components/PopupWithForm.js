@@ -1,43 +1,54 @@
-import React from 'react';
-
-
-export default function PopupWithForm({
-  name,
+export default function PopupWithForm({ 
   isOpen,
   onClose,
+  name,
   title,
   onSubmit,
-  children,
   submitTitle,
-  class: additionalClass
+  children,
+  elemClass,
+  isValid
 }) {
-  // Compute class names
-  const popupClassName = `popup popup_${name} ${isOpen ? 'popup_opened' : ''}`;
-  const formClassName = `form form_${name}`;
-  const buttonClassName = `form__input-btn ${additionalClass ? 'form__del-btn' : ''}`;
+  // Helper function to compose class names
+  const getClassName = (base, condition, nameOnTrue, nameOnFalse = '') => 
+      condition ? `${base} ${nameOnTrue}` : `${base} ${nameOnFalse}`;
+
+  // Popup class name
+  const popupClassName = getClassName(`popup popup_${name}`, isOpen, 'popup_opened');
+
+  // Submit button class name
+  const submitButtonClassName = getClassName(
+      `form__input-btn`,
+      isValid,
+      '',
+      'form__input-btn_disabled'
+  ) + (elemClass ? ' form__del-btn' : '');
 
   return (
-    <div className={popupClassName}>
-      <div className="popup__container">
-        <button
-          onClick={onClose}
-          type="button"
-          className="popup__close"
-          aria-label="Закрыть Popup"
-        />
-        <h3 className="popup__title">{title}</h3>
-        <form
-          className={formClassName}
-          name={`popup__form-${name}`}
-          onSubmit={onSubmit}
-        >
-          {children}
-          <button className={buttonClassName} type="submit">
-            {submitTitle}
-          </button>
-        </form>
+      <div className={popupClassName}>
+          <div className="popup__container">
+              <button
+                  onClick={onClose}
+                  type="button"
+                  className="popup__close"
+                  aria-label="Закрыть Popup"
+              />
+              <h3 className="popup__title">{title}</h3>
+              <form
+                  className={`form form_${name}`}
+                  name={`popup__form-${name}`}
+                  onSubmit={onSubmit}
+              >
+                  {children}
+                  <button
+                      disabled={!isValid}
+                      className={submitButtonClassName}
+                      type="submit"
+                  >
+                      {submitTitle}
+                  </button>
+              </form>
+          </div>
       </div>
-    </div>
   );
 }
-

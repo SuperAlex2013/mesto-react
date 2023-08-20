@@ -22,7 +22,7 @@ function App() {
     const [cardId, setCardId] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handlePopup = isEditProfilePopupOpen || isAddCardPopupOpen || isEditAvatarPopupOpen || isImagePopupOpen || isConfirmDelCardPopupOpen;
+    const isOpen = isEditProfilePopupOpen || isAddCardPopupOpen || isEditAvatarPopupOpen || isImagePopupOpen || isConfirmDelCardPopupOpen;
 
     function closeAllPopups() {
         setIsEditProfilePopupOpen(false);
@@ -45,7 +45,7 @@ function App() {
             }
         };
 
-        if (handlePopup) {
+        if (isOpen) {
             document.addEventListener('keydown', closeByEscape);
             document.addEventListener('mousedown', handleOverlay);
             return () => {
@@ -53,7 +53,7 @@ function App() {
                 document.removeEventListener('mousedown', handleOverlay);
             }
         }
-    }, [handlePopup]);
+    }, [isOpen]);
 
     useEffect(() => {
         api.getDataUser()

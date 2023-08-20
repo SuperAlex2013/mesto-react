@@ -1,28 +1,26 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 import useFormWithValidation from "../hooks/useFormWithValidation";
 
-export default function EditAvatarPopup( props, isOpen){
-    const ref = useRef();
-
-    const {values, handleChange, errors, isValid, resetForm  } = useFormWithValidation({
+export default function EditAvatarPopup(props) {
+    const { values, handleChange, errors, isValid, resetForm } = useFormWithValidation({
         updInput: ''
-    })
+    });
 
     function handleSubmit(evt) {
         evt.preventDefault();
         if (isValid) {
             props.onUpdateAvatar({
-                avatar: ref.current.value,
-            })
+                avatar: values.updInput,
+            });
         }
     }
 
     useEffect(() => {
-        if (!isOpen) {
+        if (!props.isOpen) {
             resetForm();
         }
-    }, [isOpen])
+    }, [props.isOpen, resetForm]);
 
     return (
         <PopupWithForm
@@ -36,7 +34,6 @@ export default function EditAvatarPopup( props, isOpen){
         >
             <input
                 id="upd-input"
-                ref={ref}
                 className={`form__input ${!errors.updInput ? '' : 'form__input-error'}`}
                 onChange={handleChange}
                 type="url"
@@ -45,7 +42,7 @@ export default function EditAvatarPopup( props, isOpen){
                 placeholder="Ссылка на картинку"
                 required
             />
-            <span className="form__span-error upd-input-error" > {errors.updInput} </span>
+            <span className="form__span-error upd-input-error" >{errors.updInput}</span>
         </PopupWithForm>
-    )
+    );
 }

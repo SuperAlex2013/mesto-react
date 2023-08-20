@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function Card({ 
@@ -65,20 +64,5 @@ function Card({
         </li>
     );
 }
-
-Card.propTypes = {
-    ownerId: PropTypes.string.isRequired,
-    likes: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired
-        })
-    ),
-    onCardClick: PropTypes.func.isRequired,
-    onCardLike: PropTypes.func.isRequired,
-    onCardDeleteClick: PropTypes.func.isRequired,
-    cardId: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired
-};
 
 export default Card;
